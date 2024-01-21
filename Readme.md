@@ -11,5 +11,7 @@
 
 ```
 default:
-    randomLocations: [loc]
+    randomLocations: [
+        - LocInfo
+    ]
 ```
