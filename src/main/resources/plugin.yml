@@ -2,3 +2,8 @@ name: WhiteDay
 version: '${version}'
 main: org.server.whiteday.Main
 api-version: '1.18'
+commands:
+  game:
+    description: show game commands
+  option:
+    description: setting game option

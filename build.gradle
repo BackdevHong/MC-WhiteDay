@@ -50,7 +50,7 @@ kotlin {
     jvmToolchain(17)
 }
 shadowJar{
-    archivesBaseName = 'GodOfHacking'
+    archivesBaseName = 'WhiteDay'
     destinationDirectory = file("/Users/hong-inseong/Desktop/Coding/server/plugins")
     manifest {
         attributes 'Main-Class': 'org.server.godofhacking.GodOfHacking'
