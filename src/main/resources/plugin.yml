@@ -1,0 +1,4 @@
+name: WhiteDay
+version: '${version}'
+main: org.server.whiteday.Main
+api-version: '1.18'
