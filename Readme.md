@@ -9,5 +9,7 @@
 
 # Config
 
+```
 default:
     randomLocations: [loc]
+```
