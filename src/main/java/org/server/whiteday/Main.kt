@@ -4,17 +4,23 @@ import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 
 class Main : JavaPlugin() {
-    val config : FileConfiguration = getConfig()
+
     companion object{
         var instance : Main? = null
+        var customConfig : FileConfiguration? = null
     }
+
     override fun onEnable() {
         instance = this
-        config.addDefault("", true)
+        customConfig = this.config
+
+        customConfig!!.addDefault("world.randomLocations", ArrayList<String>())
+        customConfig!!.addDefault("world.victimLocation", "테스트")
+        customConfig!!.options().copyDefaults(true)
+        saveConfig()
 
         CommandManager.registerCommands()
-
-        // Plugin startup logic
+        EventManager.registerEvents()
     }
 
     override fun onDisable() {
