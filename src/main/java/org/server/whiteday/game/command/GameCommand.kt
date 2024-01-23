@@ -1,9 +1,13 @@
 package org.server.whiteday.game.command
 
 import org.bukkit.ChatColor
+import org.bukkit.Sound
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
+import org.server.whiteday.Main
 import org.server.whiteday.utils.CheckPermission
 
 object GameCommand : CommandExecutor {
@@ -21,7 +25,32 @@ object GameCommand : CommandExecutor {
                 return true
             }
             args[0] == "start" -> {
-                sender.sendMessage("" + ChatColor.BLUE + "START")
+                Main.instance.let { server ->
+                    server!!.server.onlinePlayers.forEach {
+                        var count = 6
+                        it.playSound(it.location, Sound.BLOCK_GLASS_BREAK, 10.0F, 1F)
+                        it.addPotionEffect(PotionEffect(
+                            PotionEffectType.BLINDNESS,
+                            999999,
+                            255,
+                            true,
+                            false
+                        ))
+                        val schedule2 = it.server.scheduler.scheduleSyncRepeatingTask(
+                            server,
+                            {
+                                if (count < 2) {
+                                    it.sendTitle("", "", 0, 0, 0)
+                                    it.server.scheduler.cancelTasks(server)
+                                }
+                                it.sendTitle("화이트 데이", (count - 1).toString(), 0, 200, 20)
+                                count -= 1
+                            },
+                            20,
+                            20
+                        )
+                    }
+                }
                 return true
             }
             args[0] == "stop" -> {
