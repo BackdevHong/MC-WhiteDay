@@ -1,5 +1,6 @@
 package org.server.whiteday.game.command
 
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Sound
 import org.bukkit.command.Command
@@ -8,6 +9,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.server.whiteday.Main
+import org.server.whiteday.game.task.GameTasks
 import org.server.whiteday.utils.CheckPermission
 
 object GameCommand : CommandExecutor {
@@ -27,7 +29,6 @@ object GameCommand : CommandExecutor {
             args[0] == "start" -> {
                 Main.instance.let { server ->
                     server!!.server.onlinePlayers.forEach {
-                        var count = 6
                         it.playSound(it.location, Sound.BLOCK_GLASS_BREAK, 10.0F, 1F)
                         it.addPotionEffect(PotionEffect(
                             PotionEffectType.BLINDNESS,
@@ -36,20 +37,12 @@ object GameCommand : CommandExecutor {
                             true,
                             false
                         ))
-                        val schedule2 = it.server.scheduler.scheduleSyncRepeatingTask(
-                            server,
-                            {
-                                if (count < 2) {
-                                    it.sendTitle("", "", 0, 0, 0)
-                                    it.server.scheduler.cancelTasks(server)
-                                }
-                                it.sendTitle("화이트 데이", (count - 1).toString(), 0, 200, 20)
-                                count -= 1
-                            },
-                            20,
-                            20
-                        )
+                        it!!.sendTitle("§x§f§f§f§f§f§f§l§oW§x§f§f§e§3§e§3§l§oH§x§f§f§c§6§c§6§l§oI§x§f§f§a§a§a§a§l§oT§x§f§f§8§e§8§e§l§oE§x§f§f§7§1§7§1§l§o §x§f§f§5§5§5§5§l§oD§x§f§f§3§9§3§9§l§oA§x§f§f§1§c§1§c§l§oY", "", 0, 200, 20)
                     }
+                    val taskManager = GameTasks()
+                    Bukkit.getScheduler().runTaskLater(server, Runnable {
+                        taskManager.startTask()
+                    }, 30L)
                 }
                 return true
             }

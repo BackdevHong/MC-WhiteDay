@@ -52,14 +52,14 @@ open class RemoveInv : Listener {
 
     @EventHandler
     fun onInventoryClick(e: InventoryClickEvent) {
+        if (e.whoClicked.openInventory.topInventory.holder?.equals(inv?.holder) == false) return
+
         if (e.clickedInventory == e.whoClicked.openInventory.topInventory || e.isShiftClick) {
             if ((e.currentItem ?: ItemStack(Material.AIR)).type.isAir && !((e.cursor ?: ItemStack(Material.AIR)).type.isAir)) {
                 e.whoClicked.sendMessage("" + ChatColor.RED + ChatColor.BOLD + "설정 메뉴에 아이템을 넣을 수 없습니다.")
             }
             e.isCancelled = true
         }
-
-        if (e.whoClicked.openInventory.topInventory.holder?.equals(inv?.holder) == false) return
 
         if (e.clickedInventory?.type != InventoryType.CHEST) return
 
