@@ -14,7 +14,7 @@ object OptionTabComplater : TabCompleter {
     ): MutableList<String> {
         when {
             args.size == 1 -> {
-                return arrayListOf("randomLocation", "victimLocation").toMutableList()
+                return arrayListOf("randomLocation", "victimLocation", "jailLocation", "rootingLocation").toMutableList()
             }
 
             args[0] == "randomLocation" && args.size <= 2 -> {
@@ -23,6 +23,14 @@ object OptionTabComplater : TabCompleter {
 
             args[0] == "victimLocation" && args.size <= 2 -> {
                 return arrayListOf("set").toMutableList()
+            }
+
+            args[0] == "jailLocation" && args.size <= 2 -> {
+                return arrayListOf("set").toMutableList()
+            }
+
+            args[0] == "rootingLocation" && args.size <= 2 -> {
+                return arrayListOf("on", "off", "remove").toMutableList()
             }
 
             args.size > 2 -> {

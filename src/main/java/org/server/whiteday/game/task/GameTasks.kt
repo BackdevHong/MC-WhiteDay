@@ -10,20 +10,23 @@ import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
 import org.server.whiteday.Main
+import org.server.whiteday.game.Game
 import org.server.whiteday.game.utils.RandomMessage
 import org.server.whiteday.game.utils.RandomTeleport
 
-class GameTasks {
+class GameTasks(game : Game) {
     private var plugin: Plugin? = null
     private var config: FileConfiguration? = null
     private var task : BukkitTask? = null
     private var random : RandomTeleport? = null
     private var count: Int = 5
+    private var game: Game? = null
 
     init {
         config = Main.instance!!.config
         random = RandomTeleport
         this.plugin = Main.instance
+        this.game = game
     }
 
     fun startTask() {
@@ -70,5 +73,9 @@ class GameTasks {
                 Bukkit.broadcastMessage("<"+ChatColor.DARK_RED+ChatColor.BOLD+victim!!.displayName+ChatColor.WHITE+">"+ ChatColor.DARK_RED + ChatColor.ITALIC + ChatColor.BOLD +" "+RandomMessage.randomMessage())
             },
             20L * 20)
+    }
+
+    fun forceStopTask() {
+        Bukkit.getScheduler().cancelTasks(plugin!!)
     }
 }

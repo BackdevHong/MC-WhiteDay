@@ -15,7 +15,9 @@ class Main : JavaPlugin() {
         customConfig = this.config
 
         customConfig!!.addDefault("world.randomLocations", ArrayList<String>())
-        customConfig!!.addDefault("world.victimLocation", "테스트")
+        customConfig!!.addDefault("world.rootingLocations", ArrayList<String>())
+        customConfig!!.addDefault("world.victimLocation", "")
+        customConfig!!.addDefault("world.jailLocation", "")
         customConfig!!.options().copyDefaults(true)
         saveConfig()
 
