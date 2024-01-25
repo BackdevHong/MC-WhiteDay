@@ -5,10 +5,9 @@ import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
-import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
+import org.server.whiteday.EventManager
 import org.server.whiteday.Main
-import org.server.whiteday.game.Game
 import org.server.whiteday.option.inventory.RemoveInv
 import org.server.whiteday.option.root.Root
 import org.server.whiteday.utils.CheckPermission
@@ -145,21 +144,18 @@ object OptionCommand : CommandExecutor{
 
                     args[1] == "on" -> {
                         Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
-                        val player : Player = sender as Player
 
                         if (root != null) {
-                            if (root!!.getStatus()) {
+                            if (root!!.getStatus() == true) {
                                 sender.sendMessage("이미 상자 설치 모드가 켜져있습니다.")
                                 return false
                             }
-                            println("허허?")
-                            root!!.setModeOn(player)
+                            root!!.setModeOn()
                             sender.sendMessage("상자 설치 모드가 켜졌습니다.")
                             return true
                         }
-                        println("허허!")
-                        root = Root()
-                        root!!.setModeOn(player)
+                        root = EventManager.root
+                        root!!.setModeOn()
                         sender.sendMessage("상자 설치 모드가 켜졌습니다.")
                         return true
                     }
@@ -167,7 +163,7 @@ object OptionCommand : CommandExecutor{
                     args[1] == "off" -> {
                         Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
                         if (root != null) {
-                            if (!(root!!.getStatus())) {
+                            if (!(root!!.getStatus())!!) {
                                 sender.sendMessage("이미 상자 설치 모드가 꺼져있습니다.")
                                 return false
                             }
