@@ -1,10 +1,9 @@
 package org.server.whiteday.game.task
 
-import org.bukkit.Bukkit
-import org.bukkit.ChatColor
-import org.bukkit.Location
-import org.bukkit.Sound
+import org.bukkit.*
+import org.bukkit.block.Chest
 import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
@@ -13,6 +12,7 @@ import org.server.whiteday.Main
 import org.server.whiteday.game.Game
 import org.server.whiteday.game.utils.RandomMessage
 import org.server.whiteday.game.utils.RandomTeleport
+import java.io.File
 
 class GameTasks(game : Game) {
     private var plugin: Plugin? = null
@@ -47,6 +47,26 @@ class GameTasks(game : Game) {
 
     fun stopTask() {
         task!!.cancel()
+        Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
+
+        Main.instance?.let {
+            val sec : MutableList<String> = it.config.getStringList("world.rootingLocations")
+            val randomItems: List<String> = sec.shuffled().take(sec.size / 2)
+
+            sec.forEach { item ->
+                val loc = Location(it.server.getWorld("world"), item.split(",")[0].toDouble(), item.split(",")[1].toDouble(), item.split(",")[2].toDouble())
+                val box = it.server.getWorld("world")!!.getBlockAt(loc).state as Chest
+                val boxItem = ItemStack(Material.AIR)
+                box.blockInventory.setItem(13, boxItem)
+            }
+            randomItems.forEach { item ->
+                val loc = Location(it.server.getWorld("world"), item.split(",")[0].toDouble(), item.split(",")[1].toDouble(), item.split(",")[2].toDouble())
+                val box = it.server.getWorld("world")!!.getBlockAt(loc).state as Chest
+                val boxItem = ItemStack(Material.BOW)
+                box.blockInventory.setItem(13, boxItem)
+            }
+        }
+
         val victim = Bukkit.getOnlinePlayers().random()
         plugin!!.server.onlinePlayers.forEach {
             when {
@@ -61,7 +81,7 @@ class GameTasks(game : Game) {
             }
             it.playSound(it.location, Sound.AMBIENT_SOUL_SAND_VALLEY_MOOD, 10.0F, 1F)
             it.sendTitle(" ", ""+ ChatColor.RED + ChatColor.BOLD +"START", 0, 20 * 2, 20)
-            it.sendMessage("<"+ChatColor.DARK_RED+ChatColor.BOLD+victim!!.displayName+ChatColor.WHITE+">"+ ChatColor.DARK_RED + ChatColor.ITALIC + ChatColor.BOLD +" 난 너희들이 세상에서 " + ChatColor.UNDERLINE + "가장 끔찍하고, 고통스럽게 죽었으면 좋겠어..")
+            it.sendMessage("<"+ChatColor.DARK_RED+ChatColor.BOLD+"???"+ChatColor.WHITE+">"+ ChatColor.DARK_RED + ChatColor.ITALIC + ChatColor.BOLD +" 난 너희들이 세상에서 " + ChatColor.UNDERLINE + "가장 끔찍하고, 고통스럽게 죽었으면 좋겠어..")
         }
         Bukkit.getScheduler().runTaskLater(
             plugin!!,
@@ -70,7 +90,7 @@ class GameTasks(game : Game) {
                 val loc = Location(victim.location.world, vic[0].toDouble(), vic[1].toDouble(), vic[2].toDouble())
                 victim.teleport(loc)
                 victim.removePotionEffect(PotionEffectType.BLINDNESS)
-                Bukkit.broadcastMessage("<"+ChatColor.DARK_RED+ChatColor.BOLD+victim!!.displayName+ChatColor.WHITE+">"+ ChatColor.DARK_RED + ChatColor.ITALIC + ChatColor.BOLD +" "+RandomMessage.randomMessage())
+                Bukkit.broadcastMessage("<"+ChatColor.DARK_RED+ChatColor.BOLD+"???"+ChatColor.WHITE+">"+ ChatColor.DARK_RED + ChatColor.ITALIC + ChatColor.BOLD +" "+RandomMessage.randomMessage())
             },
             20L * 20)
     }

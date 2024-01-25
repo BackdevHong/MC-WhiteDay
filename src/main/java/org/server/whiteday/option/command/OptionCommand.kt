@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.server.whiteday.EventManager
 import org.server.whiteday.Main
-import org.server.whiteday.option.inventory.RemoveInv
 import org.server.whiteday.option.root.Root
 import org.server.whiteday.utils.CheckPermission
 import java.io.File
@@ -45,7 +44,7 @@ object OptionCommand : CommandExecutor{
 
                     args[1] == "add" -> {
                         val player : Player = sender as Player
-                                Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
+                        Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
                         val location :Location = player.location
 
                         Main.instance?.let {
@@ -74,7 +73,8 @@ object OptionCommand : CommandExecutor{
                     }
 
                     args[1] == "remove" -> {
-                        val inv = RemoveInv()
+                        val inv = EventManager.removeInv
+                        inv.resetItems("위치")
                         inv.openInventory(sender as Player)
                         return true
                     }
@@ -172,6 +172,13 @@ object OptionCommand : CommandExecutor{
                             return true
                         }
                         sender.sendMessage("이미 상자 설치 모드가 꺼져있습니다.")
+                        return true
+                    }
+
+                    args[1] == "remove" -> {
+                        val inv = EventManager.removeInv
+                        inv.resetItems("상자")
+                        inv.openInventory(sender as Player)
                         return true
                     }
                 }

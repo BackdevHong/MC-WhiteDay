@@ -2,6 +2,7 @@ package org.server.whiteday.option.inventory
 
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
@@ -18,19 +19,43 @@ import java.io.File
 
 open class RemoveInv : Listener {
     private var inv : Inventory? = null
+    private var type : String? = null
 
     init {
         inv = Bukkit.getServer().createInventory(null, 54, "삭제 GUI")
+        type = null
+    }
 
+    fun resetItems(type: String?) {
+        this.type = type
         initializeItems()
     }
 
     private fun initializeItems() {
-        Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
-        Main.instance?.let {
-            val sec : MutableList<String> = it.config.getStringList("world.randomLocations")
-            sec.forEachIndexed { idx, value ->
-                inv?.addItem(createGuiItem(value, idx.toString()))
+        if (type == null) {
+            return
+        }
+
+        inv?.clear()
+
+        when (type) {
+            "위치" -> {
+                Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
+                Main.instance?.let {
+                    val sec : MutableList<String> = it.config.getStringList("world.randomLocations")
+                    sec.forEachIndexed { idx, value ->
+                        inv?.addItem(createGuiItem(value, idx.toString()))
+                    }
+                }
+            }
+            "상자" -> {
+                Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
+                Main.instance?.let {
+                    val sec : MutableList<String> = it.config.getStringList("world.rootingLocations")
+                    sec.forEachIndexed { idx, value ->
+                        inv?.addItem(createGuiItem(value, idx.toString()))
+                    }
+                }
             }
         }
     }
@@ -69,16 +94,37 @@ open class RemoveInv : Listener {
         if (clickedItem == null || clickedItem.type.isAir) return
         val p = e.whoClicked as Player
 
-        Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
-        Main.instance?.let {
-            val sec : MutableList<String> = it.config.getStringList("world.randomLocations")
-            val index : Int = clickedItem.itemMeta?.lore.toString().replace("[^0-9]".toRegex(), "").toInt()
-            sec.removeAt(index)
-            it.config.set("world.randomLocations", sec)
-            it.saveConfig()
+        when (type) {
+            "위치" -> {
+                Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
+                Main.instance?.let {
+                    val sec : MutableList<String> = it.config.getStringList("world.randomLocations")
+                    val index : Int = clickedItem.itemMeta?.lore.toString().replace("[^0-9]".toRegex(), "").toInt()
+                    sec.removeAt(index)
+                    it.config.set("world.randomLocations", sec)
+                    it.saveConfig()
+                }
+                p.sendMessage(clickedItem.itemMeta!!.displayName + " 좌표가 삭제되었습니다.")
+                p.closeInventory()
+            }
+
+            "상자" -> {
+                Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
+
+                Main.instance?.let {
+                    val sec : MutableList<String> = it.config.getStringList("world.rootingLocations")
+                    val index : Int = clickedItem.itemMeta?.lore.toString().replace("[^0-9]".toRegex(), "").toInt()
+                    val loc = Location(it.server.getWorld("world"), clickedItem.itemMeta!!.displayName.split(",")[0].toDouble(), clickedItem.itemMeta!!.displayName.split(",")[1].toDouble(), clickedItem.itemMeta!!.displayName.split(",")[2].toDouble())
+                    it.server.getWorld("world")!!.getBlockAt(loc).type = Material.AIR
+                    sec.removeAt(index)
+                    it.config.set("world.rootingLocations", sec)
+                    it.saveConfig()
+                }
+
+                p.sendMessage(clickedItem.itemMeta!!.displayName + " 좌표에 있는 상자가 삭제되었습니다.")
+                p.closeInventory()
+            }
         }
-        p.sendMessage(clickedItem.itemMeta!!.displayName + " 좌표가 삭제되었습니다.")
-        p.closeInventory()
     }
 
     @EventHandler
