@@ -16,13 +16,15 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.server.whiteday.Main
 import java.io.File
+import kotlin.math.ceil
+
 
 open class RemoveInv : Listener {
     private var inv : Inventory? = null
     private var type : String? = null
 
     init {
-        inv = Bukkit.getServer().createInventory(null, 54, "삭제 GUI")
+        inv = Bukkit.createInventory(null, 54, "삭제 GUI")
         type = null
     }
 
@@ -36,8 +38,6 @@ open class RemoveInv : Listener {
             return
         }
 
-        inv?.clear()
-
         when (type) {
             "위치" -> {
                 Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
@@ -50,6 +50,7 @@ open class RemoveInv : Listener {
             }
             "상자" -> {
                 Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
+
                 Main.instance?.let {
                     val sec : MutableList<String> = it.config.getStringList("world.rootingLocations")
                     sec.forEachIndexed { idx, value ->
@@ -105,23 +106,6 @@ open class RemoveInv : Listener {
                     it.saveConfig()
                 }
                 p.sendMessage(clickedItem.itemMeta!!.displayName + " 좌표가 삭제되었습니다.")
-                p.closeInventory()
-            }
-
-            "상자" -> {
-                Main.instance!!.config.load(File(Main.instance!!.dataFolder, "config.yml"))
-
-                Main.instance?.let {
-                    val sec : MutableList<String> = it.config.getStringList("world.rootingLocations")
-                    val index : Int = clickedItem.itemMeta?.lore.toString().replace("[^0-9]".toRegex(), "").toInt()
-                    val loc = Location(it.server.getWorld("world"), clickedItem.itemMeta!!.displayName.split(",")[0].toDouble(), clickedItem.itemMeta!!.displayName.split(",")[1].toDouble(), clickedItem.itemMeta!!.displayName.split(",")[2].toDouble())
-                    it.server.getWorld("world")!!.getBlockAt(loc).type = Material.AIR
-                    sec.removeAt(index)
-                    it.config.set("world.rootingLocations", sec)
-                    it.saveConfig()
-                }
-
-                p.sendMessage(clickedItem.itemMeta!!.displayName + " 좌표에 있는 상자가 삭제되었습니다.")
                 p.closeInventory()
             }
         }

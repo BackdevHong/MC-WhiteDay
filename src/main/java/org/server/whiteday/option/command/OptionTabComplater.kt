@@ -30,7 +30,7 @@ object OptionTabComplater : TabCompleter {
             }
 
             args[0] == "rootingLocation" && args.size <= 2 -> {
-                return arrayListOf("on", "off", "remove").toMutableList()
+                return arrayListOf("on", "off").toMutableList()
             }
 
             args.size > 2 -> {

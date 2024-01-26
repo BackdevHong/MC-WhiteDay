@@ -174,13 +174,6 @@ object OptionCommand : CommandExecutor{
                         sender.sendMessage("이미 상자 설치 모드가 꺼져있습니다.")
                         return true
                     }
-
-                    args[1] == "remove" -> {
-                        val inv = EventManager.removeInv
-                        inv.resetItems("상자")
-                        inv.openInventory(sender as Player)
-                        return true
-                    }
                 }
             }
         }
